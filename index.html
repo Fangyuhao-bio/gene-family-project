@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鳜鱼 MLC 基因家族分析导航</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 侧边导航栏 */
+        .sidebar {
+            width: 260px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 20px;
+        }
+
+        .nav-link {
+            padding: 15px 25px;
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: var(--accent-color);
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .section-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--accent-color);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .badge {
+            background-color: #e1ecf4;
+            color: #2c3e50;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-left: 15px;
+            font-weight: normal;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .info-block {
+            margin-bottom: 15px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .time-axis {
+            background-color: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ffeeba;
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: var(--accent-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+            margin-right: 10px;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-video {
+            background-color: #ff7675;
+        }
+
+        .btn-video:hover {
+            background-color: #d63031;
+        }
+
+        .note {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            color: #555;
+            margin-top: 10px;
+            border-left: 3px solid #95a5a6;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            body { flex-direction: column; overflow: auto; }
+            .sidebar { width: 100%; height: auto; padding: 10px; }
+            .main-content { padding: 20px; }
+            .content-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>🧬 基因家族分析流程</h2>
+        <a class="nav-link" onclick="scrollToSection('sec1')">1. 进化树 + Motif</a>
+        <a class="nav-link" onclick="scrollToSection('sec2')">2. 保守结构域 (CDD)</a>
+        <a class="nav-link" onclick="scrollToSection('sec3')">3. 进化树 (MEGA/iTOL)</a>
+        <a class="nav-link" onclick="scrollToSection('sec4')">4. 理化性质 & 染色体定位</a>
+        <a class="nav-link" onclick="scrollToSection('sec5')">5. 共线性分析</a>
+        <a class="nav-link" onclick="scrollToSection('sec6')">6. 蛋白互作网络 (PPI)</a>
+        <a class="nav-link" onclick="scrollToSection('sec7')">7. 表达量热图</a>
+        <a class="nav-link" onclick="scrollToSection('sec8')">8. 亚细胞定位</a>
+    </div>
+
+    <div class="main-content">
+        
+        <div id="sec1" class="section-card">
+            <h3 class="section-title">1. Gene tree + Motif <span class="badge">可视化基础</span></h3>
+            <div class="content-grid">
+                <div>
+                    <span class="info-label">🛠️ 相关工具</span>
+                    <a href="https://meme-suite.org/meme/doc/introduction.html" target="_blank" class="btn">MEME Suite</a>
+                    <a href="https://www.chiplot.online/" target="_blank" class="btn">ChiPlot (制图)</a>
+                </div>
+                <div>
+                    <span class="info-label">📺 视频教程</span>
+                    <a href="https://www.bilibili.com/video/BV1ZM411t7eH" target="_blank" class="btn btn-video">B站：进化树+motif可视化</a>
+                </div>
+            </div>
+            <div class="info-block" style="margin-top: 15px;">
+                <span class="info-label">⏱️ 关键时间轴</span>
+                <div class="time-axis">
+                    <strong>1:00-5:15</strong> 制作树文件 + 利用MEME网站生成motif文件<br>
+                    <strong>5:30-9:20</strong> 加工美化进化树 + Motif结合图形
+                </div>
+            </div>
+            <div class="note">
+                <strong>注意：</strong> 如果已持有蛋白序列，直接使用 MEGA 11 进行分析即可；如目前只有 DNA 序列，请从视频开头开始阅览将序列转化为蛋白。
+            </div>
+        </div>
+
+        <div id="sec2" class="section-card">
+            <h3 class="section-title">2. Conserved Domain (CDD) <span class="badge">结构域分析</span></h3>
+            <div class="content-grid">
+                <div>
+                    <span class="info-label">🛠️ 相关工具</span>
+                    <a href="https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi" target="_blank" class="btn">NCBI Batch CD-search</a>
+                </div>
+                <div>
+                    <span class="info-label">📺 视频教程</span>
+                    <a href="https://search.bilibili.com/all?keyword=基因家族分析系列3" target="_blank" class="btn btn-video">B站：Domain分析</a>
+                </div>
+            </div>
+            <div class="info-block" style="margin-top: 15px;">
+                <span class="info-label">⏱️ 关键时间轴</span>
+                <div class="time-axis">
+                    <strong>0:25后</strong> 重点讲解部分
+                </div>
+            </div>
+        </div>
+
+        <div id="sec3" class="section-card">
+            <h3 class="section-title">3. 单/多物种进化树 <span class="badge">核心分析</span></h3>
+            <div class="content-grid">
+                <div>
+                    <span class="info-label">🛠️ 相关工具</span>
+                    <a href="https://itol.embl.de/" target="_blank" class="btn">iTOL (进化树美化)</a>
+                </div>
+                <div>
+                    <span class="info-label">📺 视频教程</span>
+                    <a href="https://www.bilibili.com/video/BV1ea411i7vB" target="_blank" class="btn btn-video">B站：MEGA进化分析</a>
+                </div>
+            </div>
+            <div class="info-block" style="margin-top: 15px;">
+                <span class="info-label">⏱️ 关键时间轴</span>
+                <div class="time-axis">
+                    <strong>2:00后</strong> 详细操作演示
+                </div>
+            </div>
+        </div>
+
+        <div id="sec4" class="section-card">
+            <h3 class="section-title">4. 理化性质预测 + 染色体定位 <span class="badge">基本特征</span></h3>
+            <div class="content-grid">
+                <div>
+                    <span class="info-label">🛠️ 相关工具</span>
+                    <span style="font-size:0.9rem; color:#666;">TBtools (本地软件)</span>
+                </div>
+                <div>
+                    <span class="info-label">📺 视频教程</span>
+                    <a href="https://www.bilibili.com/" target="_blank" class="btn btn-video">B站：TBtools理化分析</a>
+                    <a href="https://www.bilibili.com/" target="_blank" class="btn btn-video">B站：基因在染色体位置</a>
+                </div>
+            </div>
+            <div class="info-block" style="margin-top: 15px;">
+                <span class="info-label">⏱️ 关键时间轴</span>
+                <div class="time-axis">
+                    <strong>1:15-1:51</strong> 理化性质预测<br>
+                    <strong>注意：</strong> 文档提示“染色体定位（讲的不好不用看了）”，建议参考第二个链接“一目了然！基因在染色体上的位置”。
+                </div>
+            </div>
+        </div>
+
+        <div id="sec5" class="section-card">
+            <h3 class="section-title">5. 共线性分析 <span class="badge">进化关系</span></h3>
+            <div class="content-grid">
+                <div>
+                    <span class="info-label">🛠️ 重点说明</span>
+                    <span style="font-size:0.9rem;">包含物种内 / 物种间分析</span>
+                </div>
+                <div>
+                    <span class="info-label">📺 视频教程</span>
+                    <a href="https://www.bilibili.com/" target="_blank" class="btn btn-video">B站：共线性分析(合集)</a>
+                </div>
+            </div>
+            <div class="info-block" style="margin-top: 15px;">
+                <span class="info-label">⏱️ 关键时间轴</span>
+                <div class="time-axis">
+                    <strong>上/中集</strong> 物种间共线性<br>
+                    <strong>下集</strong> 物种内共线性<br>
+                    <span style="color:red;">* 步骤较为复杂，不建议跳过</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="sec6" class="section-card">
+            <h3 class="section-title">6. 蛋白互作网络 (PPI) <span class="badge">功能预测</span></h3>
+            <div class="content-grid">
+                <div>
+                    <span class="info-label">🛠️ 相关工具</span>
+                    <a href="https://string-db.org/" target="_blank" class="btn">STRING Database</a>
+                    <span style="font-size:0.9rem; margin-left:10px;">Cytoscape (本地软件)</span>
+                </div>
+                <div>
+                    <span class="info-label">📺 视频教程</span>
+                    <a href="https://www.bilibili.com/" target="_blank" class="btn btn-video">B站：String检索及美化</a>
+                </div>
+            </div>
+            <div class="note">
+                <strong>提示：</strong> 步骤较为复杂，不建议跳过。请确保已安装 Cytoscape。
+            </div>
+        </div>
+
+        <div id="sec7" class="section-card">
+            <h3 class="section-title">7. 表达量热图 <span class="badge">转录组数据</span></h3>
+            <div class="content-grid">
+                <div>
+                    <span class="info-label">📂 前置需求</span>
+                    <span style="color: #e74c3c; font-weight: bold;">需要表达谱文件 (TPM/FPKM)</span>
+                </div>
+                <div>
+                    <span class="info-label">📺 视频教程</span>
+                    <a href="https://www.bilibili.com/" target="_blank" class="btn btn-video">B站：保姆级热图教程</a>
+                </div>
+            </div>
+            <div class="info-block" style="margin-top: 15px;">
+                <span class="info-label">⏱️ 关键时间轴</span>
+                <div class="time-axis">
+                    <strong>开头</strong> 一图流讲解页面<br>
+                    <strong>0:55前</strong> 所有热图生成步骤<br>
+                    <strong>0:55后</strong> 功能面板详解
+                </div>
+            </div>
+        </div>
+
+        <div id="sec8" class="section-card">
+            <h3 class="section-title">8. 亚细胞定位 <span class="badge">位置预测</span></h3>
+            <div class="content-grid">
+                <div>
+                    <span class="info-label">🛠️ 相关工具</span>
+                    <a href="https://services.healthtech.dtu.dk/services/DeepLoc-2.0/" target="_blank" class="btn">DeepLoc 2.0</a>
+                </div>
+                <div>
+                    <span class="info-label">📺 视频教程</span>
+                    <a href="https://www.bilibili.com/" target="_blank" class="btn btn-video">B站：亚细胞定位网站推荐</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+                
+                // 更新高亮状态
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                event.target.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
